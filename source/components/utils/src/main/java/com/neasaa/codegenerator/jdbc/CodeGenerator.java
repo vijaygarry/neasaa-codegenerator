@@ -12,7 +12,7 @@ import com.neasaa.codegenerator.java.JavaMethodDef;
 import com.neasaa.util.config.BaseConfig;
 
 public class CodeGenerator {
-	private static String tableName = "SAIX_IDENTITY";
+	private static String tableName = "operation";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -76,16 +76,23 @@ public class CodeGenerator {
 	private static String generateJavaCodeForTable (TableDefinition aTableDefinition) throws Exception {
 			String header = "/** This is class header */";
 			
-			List<String> interfaces = new ArrayList<>();
-			interfaces.add("RowMapper<TableName>");
+//			List<String> interfaces = new ArrayList<>();
+//			interfaces.add("RowMapper<TableName>");
+			String rowMapperClassName = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()) + "RowMapper";
+			String entityClassName = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
+			RowMapperGenerator rowMapperGenerator = new RowMapperGenerator( rowMapperClassName, "com.rowmapper", entityClassName, aTableDefinition );
+			JavaClassDef buildClass = rowMapperGenerator.buildClass();
+//			System.out.println( "Row mapper class:\n" + buildClass.generateJavaClass());
+			
+			if(1==1){
+				return buildClass.generateJavaClass();
+			}
 			
 			List<JavaFieldDef> fields = new ArrayList<>();
 			Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
+			
 			for(ColumnDefinition colDef: aTableDefinition.getColumnDefinitions()) {
-				JavaFieldDef javaFieldDef = new JavaFieldDef(
-						DbHelper.getJavaDatatypeFromSqlDataType(colDef.getDataType()), 
-						DbHelper.getFieldNameFromColumnName(aTableDefinition.getTableName(), colDef.getColumnName()) 
-						);
+				JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
 				fields.add(javaFieldDef);	
 				columnNameToFieldMap.put(colDef.getColumnName(), javaFieldDef);
 			}
@@ -96,7 +103,7 @@ public class CodeGenerator {
 			addSlf4jImports (classDef);
 			addUtilDateImport (classDef);
 			classDef.setClassName(DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()));
-			classDef.setParentClass("BaseEntity"); 
+			classDef.setParentClass("BaseEntity");
 //			classDef.setInterfaces(interfaces);
 			
 			classDef.setFields(fields);

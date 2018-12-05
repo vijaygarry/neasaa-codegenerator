@@ -77,11 +77,6 @@ public class JavaClassDef {
 		return this.methods;
 	}
 
-//	public void setMethods(List<JavaMethodDef> aMethods) {
-//		this.methods = aMethods;
-//	}
-
-	
 	public void addImportClass (String aQualifiedClassName) {
 		this.importClasses.add(aQualifiedClassName);
 	}
@@ -109,9 +104,9 @@ public class JavaClassDef {
 		appendClassDeclaration(sb);
 		
 		sb.append(" {").append(NEW_LINE);
-		sb.append(getFieldDefs(fields));
+		sb.append(getFieldDefs(this.fields));
 		appendMethods(sb);
-		sb.append(getGetterSetterForFields(fields));
+		sb.append(getGetterSetterForFields(this.fields));
 		sb.append("}").append(NEW_LINE);
 		return sb.toString();
 	}
@@ -181,12 +176,12 @@ public class JavaClassDef {
 		for (JavaFieldDef field: aFields) {
 			String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
 			
-			sb.append("\t").append("public ").append(field.getDataType()).append(" " ).append(getGetterMethodName(field)).append(" {").append(NEW_LINE);
+			sb.append("\t").append("public ").append(field.getDataType()).append(" " ).append(getGetterMethodName(field)).append(" () {").append(NEW_LINE);
 			sb.append("\t\treturn this.").append(field.getFieldName()).append(";").append(NEW_LINE);
 			sb.append("\t").append("}").append(NEW_LINE);
 			
 			String setterParamName = "a" + capitalizeFieldName;
-			sb.append("\t").append("public void set").append(StringUtils.capitalize(field.getFieldName())).append(" (").append(field.getDataType()).append(" ").append(setterParamName).append(") {").append(NEW_LINE);
+			sb.append("\t").append("public void ").append(getSetterMethodName(field)).append(" (").append(field.getDataType()).append(" ").append(setterParamName).append(") {").append(NEW_LINE);
 			sb.append("\t\tthis.").append(field.getFieldName()).append(" = ").append(setterParamName).append(";").append(NEW_LINE);
 			sb.append("\t").append("}").append(NEW_LINE).append(NEW_LINE);
 
@@ -197,7 +192,12 @@ public class JavaClassDef {
 	
 	public static String getGetterMethodName (JavaFieldDef field) {
 		String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
-		return "get" + capitalizeFieldName + " ()";
+		return "get" + capitalizeFieldName;
+	}
+	
+	public static String getSetterMethodName (JavaFieldDef field) {
+		String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
+		return "set" + capitalizeFieldName ;
 	}
 	
 	public static void main(String[] args) {

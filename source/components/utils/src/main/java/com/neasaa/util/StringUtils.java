@@ -208,6 +208,22 @@ public class StringUtils {
 		chars[0] = updatedFirstChar;
 		return new String(chars, 0, chars.length);
 	}
+	
+	public static String lowerFirstChar (String aStringValue) {
+		if (isEmpty(aStringValue)) {
+			return aStringValue;
+		}
+
+		char firstChar = aStringValue.charAt(0);
+		char updatedFirstChar;
+		updatedFirstChar = Character.toLowerCase( firstChar);
+		if (firstChar == updatedFirstChar) {
+			return aStringValue;
+		}
+		char[] chars = aStringValue.toCharArray();
+		chars[0] = updatedFirstChar;
+		return new String(chars, 0, chars.length);
+	}
 	// --------------------------------------------------------------------------
 }
 // ----------------------------------------------------------------------------

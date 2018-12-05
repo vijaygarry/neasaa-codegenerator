@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +49,8 @@ public class SqlStatementHelper {
 			sb.append( "setBooleanInStatement ");
 			break;
 		case BIT:
+			sb.append( "setBooleanInStatement ");
+			break;
 		case TINYINT:
 		case LONGVARCHAR:
 		case TIME:
@@ -78,9 +79,73 @@ public class SqlStatementHelper {
 
 		default:
 			throw new Exception( "Data type " + aJdbcType
-					+ " not supported by utility.");
+					+ " not supported by utility." + " ColIndex:" + aColIndex + ", colValue:" + aColValueString);
 		}
 		sb.append("( prepareStatement, ").append(aColIndex).append(", ").append(aColValueString).append(" );");
+		return sb.toString();
+	}
+	
+	public static String getResultSetMethod (String aResultSetVarName, JDBCType aJdbcType, String aColName) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		switch (aJdbcType) {
+		case CHAR:
+		case VARCHAR:
+			return ( aResultSetVarName + ".getString( \"" + aColName + "\")");
+		case SMALLINT:
+			return ( aResultSetVarName + ".getShort( \"" + aColName + "\")");
+		case BIGINT:
+			return ( aResultSetVarName + ".getLong( \"" + aColName + "\")");			
+		case INTEGER:
+			return ( aResultSetVarName + ".getInt( \"" + aColName + "\")");
+		case FLOAT:
+		case REAL:
+			sb.append( "setFloatInStatement ");
+			break;
+		case DOUBLE:
+			sb.append( "setDoubleInStatement ");
+			break;
+		case NUMERIC:
+		case DECIMAL:
+			sb.append( "setBigDecimalInStatement ");
+			break;
+		case TIMESTAMP:
+		case DATE:
+			return ( aResultSetVarName + ".getDate( \"" + aColName + "\")");
+		case BOOLEAN:
+			return ( aResultSetVarName + ".getBoolean( \"" + aColName + "\")");
+		case BIT:
+			return ( aResultSetVarName + ".getBoolean( \"" + aColName + "\")");
+		case TINYINT:
+		case LONGVARCHAR:
+		case TIME:
+		case TIME_WITH_TIMEZONE:
+		case TIMESTAMP_WITH_TIMEZONE:
+		case BINARY:
+		case VARBINARY:
+		case LONGVARBINARY:
+		case NULL:
+		case OTHER:
+		case JAVA_OBJECT:
+		case DISTINCT:
+		case STRUCT:
+		case ARRAY:
+		case BLOB:
+		case CLOB:
+		case REF:
+		case DATALINK:
+		case ROWID:
+		case NCHAR:
+		case NVARCHAR:
+		case LONGNVARCHAR:
+		case NCLOB:
+		case SQLXML:
+		case REF_CURSOR:
+
+		default:
+			throw new Exception( "Data type " + aJdbcType
+					+ " not supported by utility." + " ColName:" + aColName);
+		}
+//		sb.append("( prepareStatement, ").append(aColIndex).append(", ").append(aColValueString).append(" );");
 		return sb.toString();
 	}
 	/**
