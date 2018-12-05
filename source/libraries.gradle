@@ -1,0 +1,124 @@
+//This file list out all the jars required by this application
+
+// Define variable to use version of specific jars
+ext.springVersion = '5.1.1.RELEASE'
+ext.jacksonVersion = '2.9.7'
+ext.hibernateVersion = '5.3.7.Final'
+
+
+// Define list of jars to be used by application
+// Note: All these jars are not included in all project default Need to use these library name.
+ext.libraries = [
+	//Core Spring jars
+	springCore : "org.springframework:spring-core:${springVersion}@jar",
+	springContext : "org.springframework:spring-context:${springVersion}@jar",
+	springAop : "org.springframework:spring-aop:${springVersion}@jar",
+	springBeans : "org.springframework:spring-beans:${springVersion}@jar",
+	springExpression : "org.springframework:spring-expression:${springVersion}@jar",
+	// Spring JDBC jars
+	springJdbc: "org.springframework:spring-jdbc:${springVersion}@jar",
+	springTx: "org.springframework:spring-tx:${springVersion}@jar",
+	
+	//Spring Object/Relational Mapping
+	springOrm: "org.springframework:spring-orm:${springVersion}@jar",
+
+	//Spring WEB related jars.
+	springWeb: "org.springframework:spring-web:${springVersion}@jar",
+	springMvc: "org.springframework:spring-webmvc:${springVersion}@jar",
+	
+	postgresJdbc: "org.postgresql:postgresql:42.2.5@jar",
+
+	//Connection pooling
+	commonsDBPC2: "org.apache.commons:commons-dbcp2:2.5.0@jar",
+	commonsPool2: "org.apache.commons:commons-pool2:2.6.0@jar",
+
+	//For file utils
+	commonsIo: "commons-io:commons-io:2.6@jar",
+	commonCsv: "org.apache.commons:commons-csv:1.6@jar",
+
+	
+	//Jackson jars for Json handing
+    jacksonCore: "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}@jar",
+    jacksonDatabind: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}@jar",
+    jacksonAnnotations: "com.fasterxml.jackson.core:jackson-annotations:2.9.0@jar",
+
+    //Logging Jars
+    slf4jApi: "org.slf4j:slf4j-api:1.7.25@jar",
+	slf4jImpl: "org.apache.logging.log4j:log4j-slf4j-impl:2.10.0@jar",
+	apacheLogApi : "org.apache.logging.log4j:log4j-api:2.10.0@jar",
+	apacheLogCore: "org.apache.logging.log4j:log4j-core:2.10.0@jar",
+	//Spring dependency on commons logging
+	commonsLogging: "commons-logging:commons-logging:1.2@jar",
+
+	// Servlet API only for compilation. This jar should not be inclided in war file.
+	servletApi: "javax.servlet:javax.servlet-api:3.0.1",
+
+	//Hibernate jsrs:
+	hibernateCore: "org.hibernate:hibernate-core:${hibernateVersion}@jar",
+	hibernateEntity: "org.hibernate:hibernate-entitymanager:${hibernateVersion}@jar"
+	// Hibernate uses JPA (javax.persistence) annotations
+	// jpa: "javax.persistence:javax.persistence-api:2.2@jar",
+	// This jar has hibernate specific annotations.
+	// hibernateCommonAnnotation: "org.hibernate.common:hibernate-commons-annotations:5.0.1.Final@jar",
+	// TODO: Hibernate depends on jboss Logging. Need to check, if we can remove this dependency
+	// jbossLogging: "org.jboss.logging:jboss-logging:3.3.0.Final@jar",
+	//Hibernate needs dom4j jar
+	// dom4j: "dom4j:dom4j:1.6.1@jar",
+ 	// fasterXml: "com.fasterxml:classmate:1.3.0@jar",
+ 	// javassist: "org.javassist:javassist:3.20.0-GA@jar",
+	// Spring ORM depends on java Tx
+	// javaTx: "javax.transaction:javax.transaction-api:1.2@jar",
+	//Hibernate dependency
+	// antlr: "antlr:antlr:2.7.7@jar"
+	// byte-buddy required by hibernate for creating class
+	// byteBuddy : "net.bytebuddy:byte-buddy:1.8.17@jar"
+
+]
+
+// Grouping jars for easy reference.
+libraries << [
+	logger: [
+		libraries.slf4jApi,
+		libraries.slf4jImpl,
+		libraries.apacheLogApi,
+		libraries.apacheLogCore,
+		libraries.commonsLogging
+	],
+	springBundle: [
+		libraries.springCore,
+		libraries.springContext,
+		libraries.springAop,
+		libraries.springBeans,
+		libraries.springExpression,
+		libraries.springJdbc,
+		libraries.springTx,
+		libraries.springOrm
+	],
+	springMvcBundle: [
+		libraries.springWeb,
+		libraries.springMvc
+	],
+	jackson: [
+		libraries.jacksonCore,
+		libraries.jacksonDatabind,
+		libraries.jacksonAnnotations
+	],
+	hibernate: [
+		libraries.hibernateCore,
+		libraries.hibernateEntity
+		// libraries.jpa,
+		// libraries.hibernateCommonAnnotation,
+		// libraries.jbossLogging,
+		// libraries.javaTx,
+		// libraries.dom4j,
+		// libraries.fasterXml,
+		// libraries.javassist,
+		// libraries.antlr,
+		// libraries.byteBuddy
+	],
+	commons: [
+		libraries.commonsIo,
+		libraries.commonsDBPC2,
+		libraries.commonsPool2
+	]
+]

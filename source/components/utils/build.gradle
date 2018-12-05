@@ -1,0 +1,15 @@
+jar {
+    baseName = 'neasaa-utils'
+}
+
+dependencies {
+	compile libraries.logger
+    compile libraries.springBundle
+    compile libraries.hibernate
+    compile libraries.jackson
+    compile libraries.postgresJdbc
+    compile libraries.commons
+    compile libraries.commonCsv
+}
+
+eclipse.project.name = 'neasaa-utils'
