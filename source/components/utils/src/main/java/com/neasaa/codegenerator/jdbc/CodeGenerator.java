@@ -12,7 +12,7 @@ import com.neasaa.codegenerator.java.JavaMethodDef;
 import com.neasaa.util.config.BaseConfig;
 
 public class CodeGenerator {
-	private static String tableName = "operation";
+	private static String tableName = "saix_account";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -34,42 +34,24 @@ public class CodeGenerator {
 			System.exit(2);
 		}
 
-		// TODO:
-		// Get list of tables from db connection
-		List<String> tableNames = null;
-		try {
-			tableNames = DBMetaDataHelper.getAllTablesInSchema(connection, "");
-		} catch (Exception ex) {
-			System.err.println("Fail to get list of tables from db");
-			ex.printStackTrace();
-			System.exit(3);
-		}
-
-		System.out.println("Table names from db: " + tableNames);
-		// For each table generate the code
-		for (String tableName : tableNames) {
-			
-			if (ignoreTable(tableName)) {
-				continue;
-			}
-			if(tableName.equalsIgnoreCase(CodeGenerator.tableName)) {
-				TableDefinition tableDefinition = DBMetaDataHelper.buildTableDefinition (connection, tableName, null);
-				System.out.println("Table:" + tableDefinition);
-				System.out.println("Class code" + generateJavaCodeForTable(tableDefinition));
-			}
-						
+		//If mode is print table names, then call this method.
+		CodeGeneratorHelper.printAllTableDetailsForSchema(connection, "");
+		
+		//If mode is Print table details, then call this method:
+		CodeGeneratorHelper.printTableDetails(connection, tableName, null);
+		
+		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (connection, tableName, null);
+		
+		EntityClassGenerator.generateEntityClassForTable(tableDefinition, "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/");
+		
+		System.out.println("Class code" + generateJavaCodeForTable(tableDefinition));
 			// Create RowMapper using table def
 
 			// Create TableHelper
 			// Class with insert statement, update statement and delete
 			// statement
 			// This class should also have default select statement
-		}
-	}
-
-
-	private static boolean ignoreTable(String aTableName) {
-		return BaseConfig.getBooleanProperty(aTableName.toUpperCase() + ".IGNORE", false);
+		
 	}
 
 	
@@ -100,8 +82,8 @@ public class CodeGenerator {
 			JavaClassDef classDef = new JavaClassDef();
 			classDef.setHeader(header);
 			classDef.setPackageName("com.neasaa.util");
-			addSlf4jImports (classDef);
-			addUtilDateImport (classDef);
+			//addSlf4jImports (classDef);
+			//addUtilDateImport (classDef);
 			classDef.setClassName(DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()));
 			classDef.setParentClass("BaseEntity");
 //			classDef.setInterfaces(interfaces);
@@ -165,12 +147,5 @@ public class CodeGenerator {
 		}
 		return sb.toString();
 	}
-	public static void addSlf4jImports (JavaClassDef aClassDef) {
-		aClassDef.addImportClass("org.slf4j.Logger");
-		aClassDef.addImportClass("org.slf4j.LoggerFactory");
-	}
 	
-	public static void addUtilDateImport (JavaClassDef aClassDef) {
-		aClassDef.addImportClass("java.util.Date");
-	}
 }
