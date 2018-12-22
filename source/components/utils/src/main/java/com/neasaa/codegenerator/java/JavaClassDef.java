@@ -18,7 +18,7 @@ public class JavaClassDef {
 	private List<JavaFieldDef> fields;
 	private List<JavaMethodDef> methods = new ArrayList<>();
 	
-	private static final String NEW_LINE = "\n";
+	protected static final String NEW_LINE = "\n";
 	
 
 	public String getHeader() {
@@ -85,17 +85,25 @@ public class JavaClassDef {
 		this.methods.add(aMethod);
 	}
 	
+	protected void appendHeader (StringBuilder aStringBuilder) {
+		if(!StringUtils.isEmpty(this.header)) {
+			aStringBuilder.append(this.header).append(NEW_LINE);
+		}
+		aStringBuilder.append(NEW_LINE);
+	}
+	
+	protected void appendPackage (StringBuilder aStringBuilder) {
+		if(!StringUtils.isEmpty(this.packageName)) {
+			aStringBuilder.append("package ").append(this.packageName).append(";").append(NEW_LINE);
+		}
+		aStringBuilder.append(NEW_LINE);
+	}
+	
 	public String generateJavaClass () {
 		StringBuilder sb = new StringBuilder();
 		
-		if(!StringUtils.isEmpty(this.header)) {
-			sb.append(this.header).append(NEW_LINE);
-		}
-		sb.append(NEW_LINE);
-		if(!StringUtils.isEmpty(this.packageName)) {
-			sb.append("package ").append(this.packageName).append(";").append(NEW_LINE);
-		}
-		sb.append(NEW_LINE);
+		appendHeader(sb);
+		appendPackage(sb);
 		
 		//Add all imports
 		appendImports(sb);
@@ -111,7 +119,7 @@ public class JavaClassDef {
 		return sb.toString();
 	}
 	
-	private void appendMethods(StringBuilder aStringBuilder) {
+	protected void appendMethods(StringBuilder aStringBuilder) {
 		if (this.methods != null && this.methods.size() > 0) {
 			for(JavaMethodDef method : this.methods) {
 				aStringBuilder.append(method.generateMethodCode());
@@ -121,7 +129,7 @@ public class JavaClassDef {
 	}
 	
 	
-	private void appendImports(StringBuilder aStringBuilder) {
+	protected void appendImports(StringBuilder aStringBuilder) {
 		if (this.importClasses == null || this.importClasses.size() == 0) {
 			return;
 		}
@@ -132,7 +140,7 @@ public class JavaClassDef {
 		aStringBuilder.append(NEW_LINE);
 	}
 	
-	private void appendClassDeclaration (StringBuilder sb) {
+	protected void appendClassDeclaration (StringBuilder sb) {
 		sb.append("public class ").append(this.className);	
 		
 		if(!StringUtils.isEmpty(this.parentClass)) {

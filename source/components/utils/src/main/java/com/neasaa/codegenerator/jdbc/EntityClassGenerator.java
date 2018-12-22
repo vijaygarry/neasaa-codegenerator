@@ -13,7 +13,7 @@ import com.neasaa.util.FileUtils;
  * @author Vijay Garothaya
  * @version 1.0 Dec 5, 2018
  */
-public class EntityClassGenerator extends AbstractJavaClassGenerator{
+public class EntityClassGenerator extends AbstractJavaClassGenerator {
 	
 	public static void generateEntityClassForTable (TableDefinition aTableDefinition, String aSrcMainJavaPath) throws Exception {
 		String className = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
@@ -40,6 +40,7 @@ public class EntityClassGenerator extends AbstractJavaClassGenerator{
 		classDef.setParentClass("BaseEntity");
 		
 		classDef.setFields(fields);
+		System.out.println("Creating Entity java class " + javaClassFile);
 		FileUtils.writeStringToFile(javaClassFile, classDef.generateJavaClass(), false);
 		
 	}

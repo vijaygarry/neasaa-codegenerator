@@ -1,41 +1,39 @@
 package com.neasaa.codegenerator.jdbc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.neasaa.codegenerator.java.JavaClassDef;
 import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.codegenerator.java.JavaMethodDef;
+import com.neasaa.util.FileUtils;
 import com.neasaa.util.StringUtils;
+
 
 /**
  * @author Vijay Garothaya
  * @version 1.0 Dec 5, 2018
  */
-public class RowMapperGenerator {
+public class RowMapperGenerator extends AbstractJavaClassGenerator {
 	
-	private String className;
-	private String packageName;
-	private String entityName;
-	private TableDefinition tableDefinition;
+//	private String className;
+//	private String packageName;
+//	private String entityName;
+//	private TableDefinition tableDefinition;
 	
-	
-	/**
-	 * @param aClassName
-	 * @param aPackageName
-	 * @param aEntityName
-	 * @param aTableDefinition
-	 */
-	public RowMapperGenerator ( String aClassName, String aPackageName, String aEntityName,
-			TableDefinition aTableDefinition ) {
-		super();
-		this.className = aClassName;
-		this.packageName = aPackageName;
-		this.entityName = aEntityName;
-		this.tableDefinition = aTableDefinition;
+	public static String getRowMapperClassName (String aEntityClassName) {
+		return aEntityClassName + "RowMapper";
 	}
-
-	public JavaClassDef buildClass () throws Exception {
+	
+	public static void generateRowMapperClassForTable (String aEntityClassName, TableDefinition aTableDefinition, String aSrcMainJavaPath) throws Exception {
 		JavaClassDef classDef = new JavaClassDef();
-		classDef.setClassName( this.className );
-		classDef.setPackageName( this.packageName );
+		String rowMapperClassName = getRowMapperClassName(aEntityClassName);
+		classDef.setClassName( rowMapperClassName );
+		classDef.setInterfaces(new ArrayList<>(Arrays.asList("RowMapper<" + aEntityClassName + ">")));
+		classDef.setHeader(getCopyrightHeaderForClass());
+		String packageName = "com.saix.common.event.dao.pg";
+		String javaClassFile = aSrcMainJavaPath + getClassFileName(packageName, rowMapperClassName);
+		classDef.setPackageName( packageName );
 		classDef.addImportClass( "java.sql.ResultSet" );
 		classDef.addImportClass( "java.sql.SQLException" );
 		classDef.addImportClass( "java.util.List" );
@@ -43,21 +41,25 @@ public class RowMapperGenerator {
 		classDef.addImportClass( "org.slf4j.Logger" );
 		classDef.addImportClass( "org.slf4j.LoggerFactory" );
 		classDef.addImportClass( "org.springframework.jdbc.core.RowMapper" );
-		classDef.addMethod(getmapRowMethod());
-		return classDef;
+		classDef.addMethod(getmapRowMethod (aEntityClassName, aTableDefinition));
+		FileUtils.createEmptyFile(javaClassFile, false);
+		System.out.println("Creating RowMapper java class " + javaClassFile);
+		FileUtils.writeStringToFile(javaClassFile, classDef.generateJavaClass(), false);
 	}
 	
-	private JavaMethodDef getmapRowMethod () throws Exception {
+	
+	
+	private static JavaMethodDef getmapRowMethod (String aEntityClassName, TableDefinition aTableDefinition) throws Exception {
 		JavaMethodDef method = new JavaMethodDef("mapRow", "ResultSet aRs, int aRowNum");
-		method.setReturnType(this.entityName);
+		method.setReturnType(aEntityClassName);
 		method.addMethodException("SQLException");
 		method.addAnnotation("@Override");
 		
 		StringBuilder sb = new StringBuilder();
-		String entityVarName = StringUtils.lowerFirstChar (this.entityName); 
-		sb.append("\t\t" + this.entityName).append( " " ).append( entityVarName ) .append( " = new " ).append( this.entityName ).append( " ();\n" );
-		for(ColumnDefinition colDef :this.tableDefinition.getColumnDefinitions()){
-			JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( this.tableDefinition, colDef );
+		String entityVarName = StringUtils.lowerFirstChar (aEntityClassName); 
+		sb.append("\t\t" +aEntityClassName).append( " " ).append( entityVarName ) .append( " = new " ).append( aEntityClassName ).append( " ();\n" );
+		for(ColumnDefinition colDef :aTableDefinition.getColumnDefinitions()){
+			JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
 			String setterMethodName = JavaClassDef.getSetterMethodName( javaFieldDef );
 			sb.append("\t\t" + entityVarName).append( "." ).append( setterMethodName ) .append( " (" ).append( SqlStatementHelper.getResultSetMethod( "aRs", colDef.getDataType(), colDef.getColumnName() ) ).append( " );\n" );	
 		}

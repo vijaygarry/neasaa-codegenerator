@@ -12,6 +12,7 @@ public class JavaMethodDef {
 	private String methodParams;
 	private String methodImplementation = "";
 	private List<String> exceptions = new ArrayList<>();
+	private boolean abstractMethod = false;
 	
 	
 	private static final String NEW_LINE = "\n";
@@ -44,10 +45,13 @@ public class JavaMethodDef {
 				sb.append(exception);
 			}
 		}
-		
-		sb.append(" {").append(NEW_LINE);
-		sb.append(this.methodImplementation).append(NEW_LINE);
-		sb.append("\t}");
+		if(this.abstractMethod) {
+			sb.append(";");
+		} else {
+			sb.append(" {").append(NEW_LINE);
+			sb.append(this.methodImplementation).append(NEW_LINE);
+			sb.append("\t}");
+		}
 		return sb.toString();
 	}
 
@@ -73,6 +77,10 @@ public class JavaMethodDef {
 
 	public void setMethodParams(String aMethodParams) {
 		this.methodParams = aMethodParams;
-	}	
+	}
+	
+	public void setAbstractMethod(boolean aAbstractMethod) {
+		this.abstractMethod = aAbstractMethod;
+	}
 	
 }

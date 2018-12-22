@@ -57,18 +57,19 @@ public class CodeGenerator {
 	
 	private static String generateJavaCodeForTable (TableDefinition aTableDefinition) throws Exception {
 			String header = "/** This is class header */";
-			
+			String srcMainJavaPath = "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/";
 //			List<String> interfaces = new ArrayList<>();
 //			interfaces.add("RowMapper<TableName>");
-			String rowMapperClassName = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()) + "RowMapper";
 			String entityClassName = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
-			RowMapperGenerator rowMapperGenerator = new RowMapperGenerator( rowMapperClassName, "com.rowmapper", entityClassName, aTableDefinition );
-			JavaClassDef buildClass = rowMapperGenerator.buildClass();
+			RowMapperGenerator.generateRowMapperClassForTable( entityClassName, aTableDefinition , srcMainJavaPath);
+//			JavaClassDef buildClass = rowMapperGenerator.buildClass();
 //			System.out.println( "Row mapper class:\n" + buildClass.generateJavaClass());
 			
-			if(1==1){
-				return buildClass.generateJavaClass();
-			}
+//			if(1==1){
+//				return buildClass.generateJavaClass();
+//			}
+			EntityDaoClassGenerator.generateDaoInterfaceCode(entityClassName, srcMainJavaPath);
+			EntityDaoClassGenerator.generateDaoImplCode(entityClassName, srcMainJavaPath, aTableDefinition);
 			
 			List<JavaFieldDef> fields = new ArrayList<>();
 			Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
@@ -142,7 +143,7 @@ public class CodeGenerator {
 			index++;
 			 JavaFieldDef javaFieldDef = aColumnNameToFieldMap.get(columnDef.getColumnName());
 			 String getterMethodName = JavaClassDef.getGetterMethodName(javaFieldDef);
-			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName));
+			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName + " ()"));
 			sb.append("\n");
 		}
 		return sb.toString();
