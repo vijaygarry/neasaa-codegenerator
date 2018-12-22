@@ -1,19 +1,12 @@
 package com.neasaa.codegenerator.jdbc;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import com.neasaa.codegenerator.java.JavaClassDef;
-import com.neasaa.codegenerator.java.JavaFieldDef;
-import com.neasaa.codegenerator.java.JavaMethodDef;
 import com.neasaa.util.config.BaseConfig;
 
 public class CodeGenerator {
-	private static String tableName = "saix_account";
-	
+	private static String tableName = "saix_application";
+	private static String srcMainJavaPath = "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/";
 	public static void main(String[] args) throws Exception {
 		
 		String configFileInClasspath = "metadata.config";
@@ -42,9 +35,15 @@ public class CodeGenerator {
 		
 		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (connection, tableName, null);
 		
-		EntityClassGenerator.generateEntityClassForTable(tableDefinition, "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/");
+		EntityClassGenerator.generateEntityClassForTable(tableDefinition, srcMainJavaPath);
 		
-		System.out.println("Class code" + generateJavaCodeForTable(tableDefinition));
+		String entityClassName = DbHelper.getClassNameFromTableName (tableDefinition.getTableName());
+		RowMapperGenerator.generateRowMapperClassForTable( entityClassName, tableDefinition , srcMainJavaPath);
+		
+		EntityDaoClassGenerator.generateDaoInterfaceCode(entityClassName, srcMainJavaPath);
+		EntityDaoClassGenerator.generateDaoImplCode(entityClassName, srcMainJavaPath, tableDefinition);
+		
+//		System.out.println("Class code" + generateJavaCodeForTable(tableDefinition));
 			// Create RowMapper using table def
 
 			// Create TableHelper
@@ -55,98 +54,32 @@ public class CodeGenerator {
 	}
 
 	
-	private static String generateJavaCodeForTable (TableDefinition aTableDefinition) throws Exception {
-			String header = "/** This is class header */";
-			String srcMainJavaPath = "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/";
-//			List<String> interfaces = new ArrayList<>();
-//			interfaces.add("RowMapper<TableName>");
-			String entityClassName = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
-			RowMapperGenerator.generateRowMapperClassForTable( entityClassName, aTableDefinition , srcMainJavaPath);
-//			JavaClassDef buildClass = rowMapperGenerator.buildClass();
-//			System.out.println( "Row mapper class:\n" + buildClass.generateJavaClass());
-			
-//			if(1==1){
-//				return buildClass.generateJavaClass();
+//	private static String generateJavaCodeForTable (TableDefinition aTableDefinition) throws Exception {
+//			String header = "/** This is class header */";
+//			
+//			
+//			List<JavaFieldDef> fields = new ArrayList<>();
+//			Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
+//			
+//			for(ColumnDefinition colDef: aTableDefinition.getColumnDefinitions()) {
+//				JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
+//				fields.add(javaFieldDef);	
+//				columnNameToFieldMap.put(colDef.getColumnName(), javaFieldDef);
 //			}
-			EntityDaoClassGenerator.generateDaoInterfaceCode(entityClassName, srcMainJavaPath);
-			EntityDaoClassGenerator.generateDaoImplCode(entityClassName, srcMainJavaPath, aTableDefinition);
-			
-			List<JavaFieldDef> fields = new ArrayList<>();
-			Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
-			
-			for(ColumnDefinition colDef: aTableDefinition.getColumnDefinitions()) {
-				JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
-				fields.add(javaFieldDef);	
-				columnNameToFieldMap.put(colDef.getColumnName(), javaFieldDef);
-			}
-						
-			JavaClassDef classDef = new JavaClassDef();
-			classDef.setHeader(header);
-			classDef.setPackageName("com.neasaa.util");
-			//addSlf4jImports (classDef);
-			//addUtilDateImport (classDef);
-			classDef.setClassName(DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()));
-			classDef.setParentClass("BaseEntity");
-//			classDef.setInterfaces(interfaces);
-			
-			classDef.setFields(fields);
-			addInsertStatementMethod(classDef, aTableDefinition, columnNameToFieldMap);
-			
-			return classDef.generateJavaClass();
-	}
-	
-	
-	public static void addInsertStatementMethod (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap) throws Exception {
-		String classParamName = "a"+ aClassDef.getClassName();
-		JavaMethodDef method = new JavaMethodDef("buildInsertStatement", "Connection aConection, " + aClassDef.getClassName() + " " + classParamName);
-		method.setReturnType("PreparedStatement");
-		method.addMethodException("SQLException");
-//		method.addAnnotation("@Override");
-		String sqlString = InsertSqlStatementGenerator.buildInsertSqlStatement (aTableDefinition);
-		System.out.println("sqlString: " + sqlString);
-		String sqlStatmentVar = "String sqlStatement = \"" + sqlString + "\";\n";
-		StringBuilder sb = new StringBuilder();
-		sb.append("\t\t" + sqlStatmentVar).append("\n");
-		sb.append("\t\t").append("PreparedStatement prepareStatement = aConection.prepareStatement(sqlStatement);").append("\n");
-		sb.append(getSetterStatements(aClassDef, aTableDefinition, aColumnNameToFieldMap));
-		sb.append("\t\t").append("return prepareStatement;");
-		
-		method.addMethodImplementation(sb.toString());
-		
-//		prepareStatement.setNull(1, Types.VARCHAR);
-		
-		aClassDef.addMethod(method);
-		
-		aClassDef.addImportClass("java.sql.Connection");
-		aClassDef.addImportClass("java.sql.PreparedStatement");
-		aClassDef.addImportClass("java.sql.Types");
-		
-	}
-	
-	private static String getSetterStatements (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap) throws Exception {
-		List<ColumnDefinition> columnsToAddInInsertStatement = new ArrayList<>();
-		// Loop thru all column and create a primary column list
-		for ( ColumnDefinition columnDefinition : aTableDefinition.getColumnDefinitions() ) {
-			// continue if this column to ignore on target database.
-			if ( columnDefinition.isIgnoreColumn() ) {
-				continue;
-			}
-			if ( columnDefinition.isAutoGenerated()) {
-				continue;
-			}
-			columnsToAddInInsertStatement.add( columnDefinition );
-		}
-		String classParamName = "a"+ aClassDef.getClassName();
-		int index = 0;
-		StringBuilder sb = new StringBuilder();
-		for ( ColumnDefinition columnDef : columnsToAddInInsertStatement ) {
-			index++;
-			 JavaFieldDef javaFieldDef = aColumnNameToFieldMap.get(columnDef.getColumnName());
-			 String getterMethodName = JavaClassDef.getGetterMethodName(javaFieldDef);
-			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName + " ()"));
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
+//						
+//			JavaClassDef classDef = new JavaClassDef();
+//			classDef.setHeader(header);
+//			classDef.setPackageName("com.neasaa.util");
+//			//addSlf4jImports (classDef);
+//			//addUtilDateImport (classDef);
+//			classDef.setClassName(DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()));
+//			classDef.setParentClass("BaseEntity");
+////			classDef.setInterfaces(interfaces);
+//			
+//			classDef.setFields(fields);
+////			addInsertStatementMethod(classDef, aTableDefinition, columnNameToFieldMap);
+//			
+//			return classDef.generateJavaClass();
+//	}
 	
 }
