@@ -50,7 +50,6 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 
 		classDef.setClassName(className);
 
-		classDef.setParentClass("BaseEntity");
 		addInterfaceMethods(aEntityClassName, classDef);
 		System.out.println("Creating Dao Interface java class " + javaClassFile);
 		FileUtils.writeStringToFile(javaClassFile, classDef.generateJavaClass(), false);
@@ -82,7 +81,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 			fields.add(javaFieldDef);	
 			columnNameToFieldMap.put(colDef.getColumnName(), javaFieldDef);
 		}
-		addInsertStatementMethod(classDef, aTableDefinition, columnNameToFieldMap);
+		addInsertStatementMethod(classDef, aTableDefinition, columnNameToFieldMap, aEntityClassName);
 		
 		System.out.println("Creating Dao Impl java class " + javaClassFile);
 		FileUtils.writeStringToFile(javaClassFile, classDef.generateJavaClass(), false);
@@ -162,10 +161,10 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		
 	}
 	
-	public static void addInsertStatementMethod (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap) throws Exception {
+	public static void addInsertStatementMethod (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap, String aEntityClassName) throws Exception {
 		
-		String classParamName = "a"+ aClassDef.getClassName();
-		JavaMethodDef method = new JavaMethodDef("buildInsertStatement", "Connection aConection, " + aClassDef.getClassName() + " " + classParamName);
+		String classParamName = "a"+ aEntityClassName;
+		JavaMethodDef method = new JavaMethodDef("buildInsertStatement", "Connection aConection, " + aEntityClassName + " " + classParamName);
 		method.setReturnType("PreparedStatement");
 		method.addMethodException("SQLException");
 		String sqlString = InsertSqlStatementGenerator.buildInsertSqlStatement (aTableDefinition);
@@ -174,7 +173,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\t\t" + sqlStatmentVar).append("\n");
 		sb.append("\t\t").append("PreparedStatement prepareStatement = aConection.prepareStatement(sqlStatement);").append("\n");
-		sb.append(getSetterStatements(aClassDef, aTableDefinition, aColumnNameToFieldMap));
+		sb.append(getSetterStatements(aClassDef, aTableDefinition, aColumnNameToFieldMap, aEntityClassName));
 		sb.append("\t\t").append("return prepareStatement;");
 		
 		method.addMethodImplementation(sb.toString());
@@ -189,7 +188,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		
 	}
 	
-	private static String getSetterStatements (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap) throws Exception {
+	private static String getSetterStatements (JavaClassDef aClassDef, TableDefinition aTableDefinition, Map<String, JavaFieldDef> aColumnNameToFieldMap, String aEntityClassName) throws Exception {
 		List<ColumnDefinition> columnsToAddInInsertStatement = new ArrayList<>();
 		// Loop thru all column and create a primary column list
 		for ( ColumnDefinition columnDefinition : aTableDefinition.getColumnDefinitions() ) {
@@ -202,7 +201,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 			}
 			columnsToAddInInsertStatement.add( columnDefinition );
 		}
-		String classParamName = "a"+ aClassDef.getClassName();
+		String classParamName = "a"+ aEntityClassName;
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
 		for ( ColumnDefinition columnDef : columnsToAddInInsertStatement ) {

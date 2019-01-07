@@ -40,6 +40,7 @@ public class DbHelper {
 	public static String getJavaDatatypeFromSqlDataType (JDBCType aJDBCType) {
 		String propName = "SQL." + aJDBCType.toString() + ".TO.JAVATYPE";
 		String javaType = BaseConfig.getOptionalProperty(propName);
+//		System.out.println("prop name :" + propName + " Value: " + javaType);
 		if (javaType != null) {
 			return javaType;
 		}
