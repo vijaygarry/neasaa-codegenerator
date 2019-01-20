@@ -8,6 +8,7 @@ import java.util.Map;
 import com.neasaa.codegenerator.java.JavaClassDef;
 import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.util.FileUtils;
+import com.neasaa.util.config.BaseConfig;
 
 /**
  * @author Vijay Garothaya
@@ -15,10 +16,12 @@ import com.neasaa.util.FileUtils;
  */
 public class EntityClassGenerator extends AbstractJavaClassGenerator {
 	
-	public static void generateEntityClassForTable (TableDefinition aTableDefinition, String aSrcMainJavaPath) throws Exception {
+	public static void generateEntityClassForTable (TableDefinition aTableDefinition) throws Exception {
+		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
+		String packageName = BaseConfig.getProperty("java.generated.file.entity.package");
+		
 		String className = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
-		String packageName = "com.saix.common.entity";
-		String javaClassFile = aSrcMainJavaPath + getClassFileName(packageName, className);
+		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, className);
 		FileUtils.createEmptyFile(javaClassFile, false);
 		List<JavaFieldDef> fields = new ArrayList<>();
 		Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();

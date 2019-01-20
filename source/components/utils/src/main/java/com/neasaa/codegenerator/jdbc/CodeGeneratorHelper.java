@@ -11,10 +11,11 @@ public class CodeGeneratorHelper {
 		List<String> tableNames = null;
 		try {
 			tableNames = DBMetaDataHelper.getAllTablesInSchema(aDbConnection, aSchemaName);
-			System.out.println(StringUtils.rightPad(" Table Name", ' ', 35));
+			System.out.println(StringUtils.rightPad("     | Schema.Table Name", ' ', 35));
 			System.out.println(StringUtils.rightPad("", '=', 35));
+			int counter = 0;
 			for(String tableName : tableNames) {
-				System.out.println(" " + tableName);
+				System.out.println(StringUtils.leftPad (String.valueOf(++counter), ' ', 4)  + " | " + tableName);
 			}
 		} catch (Exception ex) {
 			System.err.println("Fail to get list of tables from db");

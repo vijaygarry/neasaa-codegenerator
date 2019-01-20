@@ -56,7 +56,8 @@ public class DBMetaDataHelper {
 			List<String> tableNames = new ArrayList<>();
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("table_name");
-				tableNames.add(tableName);
+				String schemaName = tableRs.getString("table_schem");
+				tableNames.add ( schemaName + "." + tableName);
 			}
 			return tableNames;
 		} finally {

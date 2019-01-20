@@ -11,6 +11,7 @@ import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.codegenerator.java.JavaInterfaceDef;
 import com.neasaa.codegenerator.java.JavaMethodDef;
 import com.neasaa.util.FileUtils;
+import com.neasaa.util.config.BaseConfig;
 
 /**
  * This class will generate interface with following method: <br>
@@ -36,10 +37,12 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		return "insert" + aEntityClassName;
 	}
 	
-	public static void generateDaoInterfaceCode (String aEntityClassName, String aSrcMainJavaPath) throws Exception {
+	public static void generateDaoInterfaceCode (String aEntityClassName) throws Exception {
+		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
+		String packageName = BaseConfig.getProperty("java.generated.file.dao.package");
+		
 		String className = getDaoInterfaceName (aEntityClassName);
-		String packageName = "com.saix.common.dao";
-		String javaClassFile = aSrcMainJavaPath + getClassFileName(packageName, className);
+		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, className);
 		FileUtils.createEmptyFile(javaClassFile, false);
 
 		JavaInterfaceDef classDef = new JavaInterfaceDef();
@@ -56,10 +59,14 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		
 	}
 	
-	public static void generateDaoImplCode (String aEntityClassName, String aSrcMainJavaPath, TableDefinition aTableDefinition) throws Exception {
+	public static void generateDaoImplCode (String aEntityClassName, TableDefinition aTableDefinition) throws Exception {
+		
+		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
+		String packageName = BaseConfig.getProperty("java.generated.file.dao.package");
+		packageName = packageName + ".pg";
+		
 		String className = getDaoImplName (aEntityClassName);
-		String packageName = "com.saix.common.dao.pg";
-		String javaClassFile = aSrcMainJavaPath + getClassFileName(packageName, className);
+		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, className);
 		FileUtils.createEmptyFile(javaClassFile, false);
 
 		JavaClassDef classDef = new JavaClassDef();

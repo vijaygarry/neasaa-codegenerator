@@ -1,22 +1,40 @@
 package com.neasaa.codegenerator;
 
+import com.neasaa.codegenerator.jdbc.CodeGenerator;
+
 public class CodeGenerationCliParameter {
 	
-	public static final String MODE_DB_TABLE_LIST = "DB_TABLE_LIST";
-	public static final String MODE_DB_TABLE_DETAILS = "DB_TABLE_DETAILS";
-	public static final String TABLE_CREATE_ENTITY_CLASS = "TABLE_CREATE_ENTITY_CLASS";
-	public static final String TABLE_CREATE_ROWMAPPER_CLASS = "TABLE_CREATE_ROWMAPPER_CLASS";
-	public static final String TABLE_CREATE_DAO_CLASS = "TABLE_CREATE_DAO_CLASS";
-	public static final String TABLE_CREATE_ALL_CLASSES = "TABLE_CREATE_ALL_CLASSES";
-	public static final String UPDATE_CLASS_HEADER = "UPDATE_CLASS_HEADER";
 	
+	private CodeGeneratorMode mode = CodeGeneratorMode.DB_TABLE_LIST;
+	private String applicationConfigFilename = null;
 	
-	private String mode = MODE_DB_TABLE_LIST;
-	
-	
-	public String getMode() {
+	public CodeGeneratorMode getMode() {
 		return this.mode;
 	}
 	
+	public String getApplicationConfigFilename() {
+		return this.applicationConfigFilename;
+	}
 	
+	public static CodeGenerationCliParameter parseCommandLineParams (String aArgs[]) {
+		CodeGenerationCliParameter cliParams = new CodeGenerationCliParameter();
+		
+		if(aArgs == null || aArgs.length == 0) {
+			printUsage();
+			System.exit(1);
+		}
+		
+		cliParams.mode = CodeGeneratorMode.valueOf(aArgs[0]);
+		if(cliParams.mode == null) {
+			System.err.println ("Invalid mode " + aArgs[0] + ". Possible values are " + CodeGeneratorMode.values());
+		}
+		if(aArgs.length > 1) {
+			cliParams.applicationConfigFilename = aArgs[1];
+		}
+		return cliParams;
+	}
+	
+	public static void printUsage () {
+		System.out.println ( CodeGenerator.class + " <mode> <applicationConfig>");
+	}
 }

@@ -8,6 +8,7 @@ import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.codegenerator.java.JavaMethodDef;
 import com.neasaa.util.FileUtils;
 import com.neasaa.util.StringUtils;
+import com.neasaa.util.config.BaseConfig;
 
 
 /**
@@ -25,14 +26,17 @@ public class RowMapperGenerator extends AbstractJavaClassGenerator {
 		return aEntityClassName + "RowMapper";
 	}
 	
-	public static void generateRowMapperClassForTable (String aEntityClassName, TableDefinition aTableDefinition, String aSrcMainJavaPath) throws Exception {
+	public static void generateRowMapperClassForTable (String aEntityClassName, TableDefinition aTableDefinition) throws Exception {
+		
+		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
+		String packageName = BaseConfig.getProperty("java.generated.file.dao.package");
+		packageName = packageName + ".pg";
 		JavaClassDef classDef = new JavaClassDef();
 		String rowMapperClassName = getRowMapperClassName(aEntityClassName);
 		classDef.setClassName( rowMapperClassName );
 		classDef.setInterfaces(new ArrayList<>(Arrays.asList("RowMapper<" + aEntityClassName + ">")));
 		classDef.setHeader(getCopyrightHeaderForClass());
-		String packageName = "com.saix.common.event.dao.pg";
-		String javaClassFile = aSrcMainJavaPath + getClassFileName(packageName, rowMapperClassName);
+		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, rowMapperClassName);
 		classDef.setPackageName( packageName );
 		classDef.addImportClass( "java.sql.ResultSet" );
 		classDef.addImportClass( "java.sql.SQLException" );

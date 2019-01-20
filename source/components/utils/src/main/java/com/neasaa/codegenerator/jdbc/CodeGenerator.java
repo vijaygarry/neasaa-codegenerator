@@ -1,19 +1,31 @@
 package com.neasaa.codegenerator.jdbc;
 
 import java.sql.Connection;
+import java.util.Arrays;
 
+import com.neasaa.codegenerator.CodeGenerationCliParameter;
 import com.neasaa.util.config.BaseConfig;
 
 public class CodeGenerator {
-	private static String tableName = "saix_application";
-	private static String srcMainJavaPath = "/Users/vijay/work/saix/projects/ApiService/source/components/entity-processor/build/";
+	private static String tableName = "saix_appentitlement";
 	public static void main(String[] args) throws Exception {
 		
-		String configFileInClasspath = "metadata.config";
+		CodeGenerationCliParameter cliParams = CodeGenerationCliParameter.parseCommandLineParams(args);
+		
+		String [] configFiles;
+		if(cliParams.getApplicationConfigFilename() != null) {
+			configFiles = new String[2];
+			configFiles[0] =  "metadata.config";
+			configFiles[1] =  cliParams.getApplicationConfigFilename();
+		} else {
+			configFiles = new String[1];
+			configFiles[0] =  "metadata.config";
+		}
 		try {
-			BaseConfig.initialize(configFileInClasspath);
+			System.out.println( "Loading configurtion file " + Arrays.asList(configFiles));
+			BaseConfig.initialize(configFiles);
 		} catch (Exception ex) {
-			System.err.println("Fail to load the property file " + configFileInClasspath);
+			System.err.println("Fail to load configuration file. " + ex.getMessage());
 			ex.printStackTrace();
 			System.exit(1);
 		}
@@ -26,60 +38,47 @@ public class CodeGenerator {
 			ex.printStackTrace();
 			System.exit(2);
 		}
-
-		//If mode is print table names, then call this method.
-		CodeGeneratorHelper.printAllTableDetailsForSchema(connection, "");
 		
-		//If mode is Print table details, then call this method:
-		CodeGeneratorHelper.printTableDetails(connection, tableName, null);
-		
-		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (connection, tableName, null);
-		
-		EntityClassGenerator.generateEntityClassForTable(tableDefinition, srcMainJavaPath);
-		
-		String entityClassName = DbHelper.getClassNameFromTableName (tableDefinition.getTableName());
-		RowMapperGenerator.generateRowMapperClassForTable( entityClassName, tableDefinition , srcMainJavaPath);
-		
-		EntityDaoClassGenerator.generateDaoInterfaceCode(entityClassName, srcMainJavaPath);
-		EntityDaoClassGenerator.generateDaoImplCode(entityClassName, srcMainJavaPath, tableDefinition);
-		
-//		System.out.println("Class code" + generateJavaCodeForTable(tableDefinition));
-			// Create RowMapper using table def
-
-			// Create TableHelper
-			// Class with insert statement, update statement and delete
-			// statement
-			// This class should also have default select statement
-		
+		switch (cliParams.getMode()) {
+		case DB_TABLE_LIST:
+			//If mode is print table names, then call this method.
+			CodeGeneratorHelper.printAllTableDetailsForSchema(connection, "");
+			break;
+		case DB_TABLE_DETAILS:
+			//If mode is Print table details, then call this method:
+			CodeGeneratorHelper.printTableDetails(connection, tableName, null);
+			break;
+		case TABLE_CREATE_ENTITY_CLASS:
+			createTableEntityCode (connection, tableName, null);
+			break;
+		case TABLE_CREATE_ROWMAPPER_CLASS:
+			createTableRowMapperCode (connection, tableName, null);
+			break;
+		case TABLE_CREATE_DAO_CLASS:
+			createTableDaoCode  (connection, tableName, null);
+			break;
+		default:
+			System.out.println ( "Invalid mode " + cliParams.getMode());
+		}
 	}
-
 	
-//	private static String generateJavaCodeForTable (TableDefinition aTableDefinition) throws Exception {
-//			String header = "/** This is class header */";
-//			
-//			
-//			List<JavaFieldDef> fields = new ArrayList<>();
-//			Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
-//			
-//			for(ColumnDefinition colDef: aTableDefinition.getColumnDefinitions()) {
-//				JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
-//				fields.add(javaFieldDef);	
-//				columnNameToFieldMap.put(colDef.getColumnName(), javaFieldDef);
-//			}
-//						
-//			JavaClassDef classDef = new JavaClassDef();
-//			classDef.setHeader(header);
-//			classDef.setPackageName("com.neasaa.util");
-//			//addSlf4jImports (classDef);
-//			//addUtilDateImport (classDef);
-//			classDef.setClassName(DbHelper.getClassNameFromTableName (aTableDefinition.getTableName()));
-//			classDef.setParentClass("BaseEntity");
-////			classDef.setInterfaces(interfaces);
-//			
-//			classDef.setFields(fields);
-////			addInsertStatementMethod(classDef, aTableDefinition, columnNameToFieldMap);
-//			
-//			return classDef.generateJavaClass();
-//	}
+	
+	private static void createTableEntityCode (Connection aConnection, String aTableName, String aSchemaName) throws Exception {
+		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (aConnection, aTableName, aSchemaName);
+		EntityClassGenerator.generateEntityClassForTable(tableDefinition);
+	}
+	
+	private static void createTableRowMapperCode (Connection aConnection, String aTableName, String aSchemaName) throws Exception {
+		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (aConnection, aTableName, aSchemaName);
+		String entityClassName = DbHelper.getClassNameFromTableName (tableDefinition.getTableName());
+		RowMapperGenerator.generateRowMapperClassForTable( entityClassName, tableDefinition);
+	}
+	
+	private static void createTableDaoCode (Connection aConnection, String aTableName, String aSchemaName) throws Exception {
+		TableDefinition tableDefinition = DBMetaDataHelper.getTableDefinition (aConnection, aTableName, aSchemaName);
+		String entityClassName = DbHelper.getClassNameFromTableName (tableDefinition.getTableName());
+		EntityDaoClassGenerator.generateDaoInterfaceCode(entityClassName);
+		EntityDaoClassGenerator.generateDaoImplCode(entityClassName, tableDefinition);
+	}
 	
 }
