@@ -11,8 +11,8 @@ public class CodeGeneratorHelper {
 		List<String> tableNames = null;
 		try {
 			tableNames = DBMetaDataHelper.getAllTablesInSchema(aDbConnection, aSchemaName);
-			System.out.println(StringUtils.rightPad("     | Schema.Table Name", ' ', 35));
-			System.out.println(StringUtils.rightPad("", '=', 35));
+			System.out.println(StringUtils.rightPad("     | Schema.Table Name", ' ', 50));
+			System.out.println(StringUtils.rightPad("", '=', 50));
 			int counter = 0;
 			for(String tableName : tableNames) {
 				System.out.println(StringUtils.leftPad (String.valueOf(++counter), ' ', 4)  + " | " + tableName);
