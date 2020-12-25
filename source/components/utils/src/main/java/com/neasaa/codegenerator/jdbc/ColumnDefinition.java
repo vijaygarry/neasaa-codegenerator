@@ -2,7 +2,8 @@ package com.neasaa.codegenerator.jdbc;
 
 import java.sql.JDBCType;
 
-import org.springframework.util.StringUtils;
+import com.neasaa.util.StringUtils;
+
 
 public class ColumnDefinition {
 

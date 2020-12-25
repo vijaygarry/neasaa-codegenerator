@@ -33,8 +33,9 @@ public class DbHelper {
 		if (fieldName != null) {
 			return fieldName;
 		}
+		
 		System.out.println("MISSING:" + propName + "=" + aColumnName.toLowerCase());
-		return aColumnName.toLowerCase();
+		return getJavaFieldNameFromColumnName(aColumnName);
 	}
 	
 	public static String getJavaDatatypeFromSqlDataType (JDBCType aJDBCType) {
@@ -48,7 +49,31 @@ public class DbHelper {
 		return StringUtils.capitalize(aJDBCType.toString().toLowerCase());
 	}
 	
+	/**
+	 * Convert column name to lower case. Remove '_' character and capitalize next char.
+	 * 
+	 * @param aDbColumnName
+	 */
+	public static String getJavaFieldNameFromColumnName (String aDbColumnName) {
+		StringBuilder sb = new StringBuilder();
+		boolean capitalize = false;
+		//Go through all the characters in the sentence.
+        for(char character : aDbColumnName.toCharArray()) {
 
+            if(character == '_') {
+                capitalize = true;
+                continue;
+            }
+            if(capitalize) {
+            	sb.append(Character.toUpperCase(character));
+            } else {
+            	sb.append(Character.toLowerCase(character));
+            }
+            capitalize = false;
+            
+        }
+        return sb.toString();
+	}
 
 
 }

@@ -23,6 +23,11 @@ public class CodeGeneratorHelper {
 			System.exit(3);
 		}
 	}
+	public static void printTableDetails (Connection aConnection, List<String> aTableNames, String aSchemaName) throws Exception {
+		for(String tableName: aTableNames) {
+			printTableDetails(aConnection, tableName, aSchemaName);
+		}
+	}
 	
 	public static void printTableDetails (Connection aConnection, String aTableName, String aSchemaName) throws Exception {
 		System.out.println();

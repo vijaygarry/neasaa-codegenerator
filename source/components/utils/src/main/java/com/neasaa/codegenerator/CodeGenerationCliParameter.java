@@ -1,15 +1,18 @@
 package com.neasaa.codegenerator;
 
-import com.neasaa.codegenerator.jdbc.CodeGenerator;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.neasaa.util.StringUtils;
 
 public class CodeGenerationCliParameter {
 	
 	
-	private CodeGeneratorMode mode = CodeGeneratorMode.DB_TABLE_LIST;
+	private List<CodeGeneratorMode> modes;
 	private String applicationConfigFilename = null;
 	
-	public CodeGeneratorMode getMode() {
-		return this.mode;
+	public List<CodeGeneratorMode> getModes() {
+		return modes;
 	}
 	
 	public String getApplicationConfigFilename() {
@@ -24,10 +27,17 @@ public class CodeGenerationCliParameter {
 			System.exit(1);
 		}
 		
-		cliParams.mode = CodeGeneratorMode.valueOf(aArgs[0]);
-		if(cliParams.mode == null) {
-			System.err.println ("Invalid mode " + aArgs[0] + ". Possible values are " + CodeGeneratorMode.values());
+		List<String> modeInputList = StringUtils.parseStringToList(aArgs[0]);
+		cliParams.modes = new ArrayList<>();
+		for (String modeName: modeInputList) {
+			CodeGeneratorMode mode = CodeGeneratorMode.getCodeGeneratorMode(modeName);
+			if(mode == null) {
+				System.err.println ("Invalid mode " + modeName + " provided. \n");
+				printUsage();
+			}
+			cliParams.modes.add(mode);
 		}
+		
 		if(aArgs.length > 1) {
 			cliParams.applicationConfigFilename = aArgs[1];
 		}
@@ -36,5 +46,10 @@ public class CodeGenerationCliParameter {
 	
 	public static void printUsage () {
 		System.out.println ( CodeGenerator.class + " <mode> <applicationConfig>");
+		System.out.println(" mode: ");
+		for (CodeGeneratorMode mode : CodeGeneratorMode.values()) {
+			System.out.println(" \t " + StringUtils.rightPad(mode.name(), ' ', 30)  + " - " + mode.getDescription());
+		}
+		System.out.println("\napplicationConfig - Specify application config path");
 	}
 }
