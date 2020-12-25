@@ -2,6 +2,8 @@ package com.neasaa.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vijay Garothaya
@@ -223,6 +225,28 @@ public class StringUtils {
 		char[] chars = aStringValue.toCharArray();
 		chars[0] = updatedFirstChar;
 		return new String(chars, 0, chars.length);
+	}
+	
+	/**
+	 * Split the input string by comma, trim the values and create a list from values.
+	 * 
+	 * @param aInput
+	 * @return - Returns List with parse values. Return null if input is null or empty.
+	 */
+	public static List<String> parseStringToList(String aInput) {
+		if(aInput == null || aInput.isEmpty()) {
+			return null;
+		}
+		String[] array = aInput.split(",");
+		
+		List<String> list = new ArrayList<String>(array.length);
+		for (String value : array) {
+			if(!value.trim().isEmpty()) {
+				list.add(value.trim());
+			}
+		}
+		return list;
+
 	}
 	// --------------------------------------------------------------------------
 }

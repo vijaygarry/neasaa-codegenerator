@@ -3,6 +3,7 @@ package com.neasaa.util.config;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -73,6 +74,15 @@ public class BaseConfig {
 		}
 		return StringUtils.parseBooleanValue(value);
 	}
+	// -------------------------------------------------------------------------
+	public static List<String> getListProperty(String aKey) {
+		String value = getOptionalProperty(aKey);
+		if (value == null) {
+			return null;
+		}
+		return StringUtils.parseStringToList(value);
+	}
+	
 	//-------------------------------------------------------------------------
 	/**
 	 * Initialize the properties with specified properties.
