@@ -3,3 +3,6 @@ source/components/utils/.settings
 source/components/utils/.classpath
 source/components/utils/.project
 source/components/utils/bin
+source/build
+source/components/build
+source/components/utils/build
