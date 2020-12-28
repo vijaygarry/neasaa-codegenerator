@@ -26,6 +26,10 @@ public class EntityClassGenerator extends AbstractJavaClassGenerator {
 		List<JavaFieldDef> fields = new ArrayList<>();
 		Map<String, JavaFieldDef> columnNameToFieldMap = new HashMap<>();
 		
+		
+		JavaFieldDef serialVerUIDField = JavaFieldDef.getSerialVerUIDFieldDef();
+		fields.add(serialVerUIDField);
+		
 		for(ColumnDefinition colDef: aTableDefinition.getColumnDefinitions()) {
 			JavaFieldDef javaFieldDef = TableToJavaHelper.getJavaFieldDefFromCol( aTableDefinition, colDef );
 			fields.add(javaFieldDef);	
@@ -35,7 +39,7 @@ public class EntityClassGenerator extends AbstractJavaClassGenerator {
 		JavaClassDef classDef = new JavaClassDef();
 		classDef.setHeader(getCopyrightHeaderForClass());
 		classDef.setPackageName(packageName);
-		addSlf4jImports (classDef);
+		//addSlf4jImports (classDef);
 		addUtilDateImport (classDef);
 		
 		classDef.setClassName(className);

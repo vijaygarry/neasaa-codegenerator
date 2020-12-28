@@ -12,7 +12,7 @@ import java.util.List;
 public class StringUtils {
 
 	public static final String WHITESPACE_CHARS = " \t\r\n\f";
-
+	public static final String NEW_LINE = "\n";
 	private static final String TRUE_VALUE = "true";
 	private static final String YES_VALUE = "yes";
 	private static final String FALSE_VALUE = "false";

@@ -239,7 +239,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		for ( ColumnDefinition columnDef : aNonPrimarykeyColumns ) {
 			index++;
 			JavaFieldDef javaFieldDef = aColumnNameToFieldMap.get(columnDef.getColumnName());
-			String getterMethodName = JavaClassDef.getGetterMethodName(javaFieldDef);
+			String getterMethodName = javaFieldDef.getGetterMethodName();
 			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName + " ()"));
 			sb.append("\n");
 		}
@@ -247,7 +247,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		for ( ColumnDefinition columnDef : aPrimarykeyColumns ) {
 			index++;
 			JavaFieldDef javaFieldDef = aColumnNameToFieldMap.get(columnDef.getColumnName());
-			String getterMethodName = JavaClassDef.getGetterMethodName(javaFieldDef);
+			String getterMethodName = javaFieldDef.getGetterMethodName();
 			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName + " ()"));
 			sb.append("\n");
 		}
@@ -353,7 +353,7 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		for ( ColumnDefinition columnDef : columnsToAddInInsertStatement ) {
 			index++;
 			 JavaFieldDef javaFieldDef = aColumnNameToFieldMap.get(columnDef.getColumnName());
-			 String getterMethodName = JavaClassDef.getGetterMethodName(javaFieldDef);
+			 String getterMethodName = javaFieldDef.getGetterMethodName();
 			sb.append("\t\t").append(SqlStatementHelper.generateSetterStatement(columnDef.getDataType(), String.valueOf(index), classParamName + "." + getterMethodName + " ()"));
 			sb.append("\n");
 		}

@@ -18,9 +18,6 @@ public class JavaClassDef {
 	private List<JavaFieldDef> fields;
 	private List<JavaMethodDef> methods = new ArrayList<>();
 	
-	protected static final String NEW_LINE = "\n";
-	
-
 	public String getHeader() {
 		return this.header;
 	}
@@ -87,16 +84,16 @@ public class JavaClassDef {
 	
 	protected void appendHeader (StringBuilder aStringBuilder) {
 		if(!StringUtils.isEmpty(this.header)) {
-			aStringBuilder.append(this.header).append(NEW_LINE);
+			aStringBuilder.append(this.header).append(StringUtils.NEW_LINE);
 		}
-		aStringBuilder.append(NEW_LINE);
+		aStringBuilder.append(StringUtils.NEW_LINE);
 	}
 	
 	protected void appendPackage (StringBuilder aStringBuilder) {
 		if(!StringUtils.isEmpty(this.packageName)) {
-			aStringBuilder.append("package ").append(this.packageName).append(";").append(NEW_LINE);
+			aStringBuilder.append("package ").append(this.packageName).append(";").append(StringUtils.NEW_LINE);
 		}
-		aStringBuilder.append(NEW_LINE);
+		aStringBuilder.append(StringUtils.NEW_LINE);
 	}
 	
 	public String generateJavaClass () {
@@ -111,11 +108,11 @@ public class JavaClassDef {
 		//Add class declaration
 		appendClassDeclaration(sb);
 		
-		sb.append(" {").append(NEW_LINE);
+		sb.append(" {").append(StringUtils.NEW_LINE);
 		sb.append(getFieldDefs(this.fields));
 		appendMethods(sb);
 		sb.append(getGetterSetterForFields(this.fields));
-		sb.append("}").append(NEW_LINE);
+		sb.append("}").append(StringUtils.NEW_LINE);
 		return sb.toString();
 	}
 	
@@ -123,7 +120,7 @@ public class JavaClassDef {
 		if (this.methods != null && this.methods.size() > 0) {
 			for(JavaMethodDef method : this.methods) {
 				aStringBuilder.append(method.generateMethodCode());
-				aStringBuilder.append(NEW_LINE);
+				aStringBuilder.append(StringUtils.NEW_LINE);
 			}
 		}
 	}
@@ -134,10 +131,10 @@ public class JavaClassDef {
 			return;
 		}
 		for (String importClass : this.importClasses) {
-			aStringBuilder.append("import ").append(importClass).append(";").append(NEW_LINE);
+			aStringBuilder.append("import ").append(importClass).append(";").append(StringUtils.NEW_LINE);
 		}
 
-		aStringBuilder.append(NEW_LINE);
+		aStringBuilder.append(StringUtils.NEW_LINE);
 	}
 	
 	protected void appendClassDeclaration (StringBuilder sb) {
@@ -166,11 +163,11 @@ public class JavaClassDef {
 		if(aFields == null || aFields.size() ==0) {
 			return "";
 		}
-		sb.append(NEW_LINE);
+		sb.append(StringUtils.NEW_LINE);
 		for (JavaFieldDef field: aFields) {
-			sb.append("\t").append("private ").append(field.getDataType()).append(" ").append(field.getFieldName()).append(";").append(NEW_LINE);
+			sb.append("\t").append(field.getFieldDecration()).append(StringUtils.NEW_LINE);
 		}
-		sb.append(NEW_LINE);
+		sb.append(StringUtils.NEW_LINE);
 		return sb.toString();
 	}
 	
@@ -180,32 +177,13 @@ public class JavaClassDef {
 		if(aFields == null || aFields.size() ==0) {
 			return "";
 		}
-		sb.append(NEW_LINE);
+		sb.append(StringUtils.NEW_LINE);
 		for (JavaFieldDef field: aFields) {
-			String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
-			
-			sb.append("\t").append("public ").append(field.getDataType()).append(" " ).append(getGetterMethodName(field)).append(" () {").append(NEW_LINE);
-			sb.append("\t\treturn this.").append(field.getFieldName()).append(";").append(NEW_LINE);
-			sb.append("\t").append("}").append(NEW_LINE);
-			
-			String setterParamName = "a" + capitalizeFieldName;
-			sb.append("\t").append("public void ").append(getSetterMethodName(field)).append(" (").append(field.getDataType()).append(" ").append(setterParamName).append(") {").append(NEW_LINE);
-			sb.append("\t\tthis.").append(field.getFieldName()).append(" = ").append(setterParamName).append(";").append(NEW_LINE);
-			sb.append("\t").append("}").append(NEW_LINE).append(NEW_LINE);
-
+			sb.append(field.getFieldGetterMethod());
+			sb.append(field.getFieldSetterMethod());
 		}
-		sb.append(NEW_LINE);
+		sb.append(StringUtils.NEW_LINE);
 		return sb.toString();
-	}
-	
-	public static String getGetterMethodName (JavaFieldDef field) {
-		String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
-		return "get" + capitalizeFieldName;
-	}
-	
-	public static String getSetterMethodName (JavaFieldDef field) {
-		String capitalizeFieldName = StringUtils.capitalize(field.getFieldName());
-		return "set" + capitalizeFieldName ;
 	}
 	
 	public static void main(String[] args) {

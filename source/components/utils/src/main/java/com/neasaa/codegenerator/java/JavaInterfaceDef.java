@@ -29,11 +29,11 @@ public class JavaInterfaceDef extends JavaClassDef {
 		//Add class declaration
 		appendClassDeclaration(sb);
 		
-		sb.append(" {").append(NEW_LINE).append(NEW_LINE);
+		sb.append(" {").append(StringUtils.NEW_LINE).append(StringUtils.NEW_LINE);
 		
 		appendMethods(sb);
 //		sb.append(getGetterSetterForFields(this.fields));
-		sb.append("}").append(NEW_LINE);
+		sb.append("}").append(StringUtils.NEW_LINE);
 		return sb.toString();
 	}
 
