@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.neasaa.codegenerator.CodeGeneratorConstants;
 import com.neasaa.codegenerator.java.JavaClassDef;
 import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.codegenerator.java.JavaInterfaceDef;
@@ -30,7 +31,8 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 	
 	public static void generateDaoInterfaceCode (String aEntityClassName) throws Exception {
 		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
-		String packageName = BaseConfig.getProperty("java.generated.file.dao.package");
+		String packageName = BaseConfig.getProperty(CodeGeneratorConstants.DAO_CLASS_PACKAGE_CONFIG_NAME);
+		String entityClassPackageName = BaseConfig.getProperty(CodeGeneratorConstants.ENTITY_CLASS_PACKAGE_CONFIG_NAME);
 		
 		String className = EntityDaoGeneratorHelper.getDaoInterfaceName (aEntityClassName);
 		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, className);
@@ -39,9 +41,10 @@ public class EntityDaoClassGenerator extends AbstractJavaClassGenerator {
 		JavaInterfaceDef classDef = new JavaInterfaceDef();
 		classDef.setHeader(getCopyrightHeaderForClass());
 		classDef.setPackageName(packageName);
-		addSlf4jImports(classDef);
-		addUtilDateImport(classDef);
-
+		//addSlf4jImports(classDef);
+		//addUtilDateImport(classDef);
+		classDef.addImportClass(entityClassPackageName + "." + aEntityClassName);
+		classDef.addImportClass("java.sql.SQLException");
 		classDef.setClassName(className);
 
 		addInterfaceMethods(aEntityClassName, classDef);

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.neasaa.codegenerator.CodeGeneratorConstants;
 import com.neasaa.codegenerator.java.JavaClassDef;
 import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.util.FileUtils;
@@ -18,7 +19,7 @@ public class EntityClassGenerator extends AbstractJavaClassGenerator {
 	
 	public static void generateEntityClassForTable (TableDefinition aTableDefinition) throws Exception {
 		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
-		String packageName = BaseConfig.getProperty("java.generated.file.entity.package");
+		String packageName = BaseConfig.getProperty(CodeGeneratorConstants.ENTITY_CLASS_PACKAGE_CONFIG_NAME);
 		
 		String className = DbHelper.getClassNameFromTableName (aTableDefinition.getTableName());
 		String javaClassFile = srcMainJavaPath + getClassFileName(packageName, className);
