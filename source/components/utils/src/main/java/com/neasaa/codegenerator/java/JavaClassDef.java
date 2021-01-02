@@ -117,10 +117,11 @@ public class JavaClassDef {
 	}
 	
 	protected void appendMethods(StringBuilder aStringBuilder) {
+		aStringBuilder.append(StringUtils.NEW_LINE);
 		if (this.methods != null && this.methods.size() > 0) {
 			for(JavaMethodDef method : this.methods) {
 				aStringBuilder.append(method.generateMethodCode());
-				aStringBuilder.append(StringUtils.NEW_LINE);
+				aStringBuilder.append(StringUtils.NEW_LINE).append(StringUtils.NEW_LINE);
 			}
 		}
 	}

@@ -45,7 +45,7 @@ public class EntityClassGenerator extends AbstractJavaClassGenerator {
 		
 		classDef.setClassName(className);
 		
-		classDef.setParentClass("BaseEntity");
+		classDef.setParentClass(CodeGeneratorConstants.ABSTRACT_ENTITY_CLASS_NAME);
 		
 		classDef.setFields(fields);
 		System.out.println("Creating Entity java class " + javaClassFile);

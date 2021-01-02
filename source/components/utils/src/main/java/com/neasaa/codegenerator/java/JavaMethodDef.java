@@ -5,6 +5,12 @@ import java.util.List;
 
 public class JavaMethodDef {
 	
+	public static String PRIVATE_ACCESS_IDENTIFIER = "private";
+	public static String PUBLIC_ACCESS_IDENTIFIER = "public";
+	public static String PROTECTED_ACCESS_IDENTIFIER = "protected";
+	public static String DEFAULT_ACCESS_IDENTIFIER = "";
+	
+	
 	private String accessIdentifier = "public";
 	private String returnType = "void";
 	private List<String> annotations = new ArrayList<>();

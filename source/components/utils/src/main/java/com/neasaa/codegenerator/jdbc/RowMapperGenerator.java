@@ -3,6 +3,7 @@ package com.neasaa.codegenerator.jdbc;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.neasaa.codegenerator.CodeGeneratorConstants;
 import com.neasaa.codegenerator.java.JavaClassDef;
 import com.neasaa.codegenerator.java.JavaFieldDef;
 import com.neasaa.codegenerator.java.JavaMethodDef;
@@ -30,6 +31,7 @@ public class RowMapperGenerator extends AbstractJavaClassGenerator {
 		
 		String srcMainJavaPath = BaseConfig.getProperty("java.generated.file.base.dir");
 		String packageName = BaseConfig.getProperty("java.generated.file.dao.package");
+		String entityClassPackageName = BaseConfig.getProperty(CodeGeneratorConstants.ENTITY_CLASS_PACKAGE_CONFIG_NAME);
 		packageName = packageName + ".pg";
 		JavaClassDef classDef = new JavaClassDef();
 		String rowMapperClassName = getRowMapperClassName(aEntityClassName);
@@ -40,11 +42,13 @@ public class RowMapperGenerator extends AbstractJavaClassGenerator {
 		classDef.setPackageName( packageName );
 		classDef.addImportClass( "java.sql.ResultSet" );
 		classDef.addImportClass( "java.sql.SQLException" );
-		classDef.addImportClass( "java.util.List" );
+		//classDef.addImportClass( "java.util.List" );
 		
-		classDef.addImportClass( "org.slf4j.Logger" );
-		classDef.addImportClass( "org.slf4j.LoggerFactory" );
+		//classDef.addImportClass( "org.slf4j.Logger" );
+		//classDef.addImportClass( "org.slf4j.LoggerFactory" );
 		classDef.addImportClass( "org.springframework.jdbc.core.RowMapper" );
+		classDef.addImportClass( entityClassPackageName + "." + aEntityClassName);
+		
 		classDef.addMethod(getmapRowMethod (aEntityClassName, aTableDefinition));
 		FileUtils.createEmptyFile(javaClassFile, false);
 		System.out.println("Creating RowMapper java class " + javaClassFile);
