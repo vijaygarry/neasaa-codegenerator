@@ -1,18 +1,18 @@
 apply plugin: 'maven-publish'
 
 task sourceJar (type: Jar) {
-	baseName = BASE_JAR_NAME
-	classifier 'sources'
-	from sourceSets.main.allSource
+    baseName = BASE_JAR_NAME
+    classifier 'sources'
+    from sourceSets.main.allSource
 }
 
 artifacts {
-	archives jar
-	archives sourceJar
+    archives jar
+    archives sourceJar
 }
 
 publishing {
-	 publications {
+     publications {
         neasaaMaven(MavenPublication) {
             groupId = POM_GROUP_ID
             artifactId = POM_ARTIFACT_ID
@@ -47,7 +47,12 @@ publishing {
     }
     repositories {
         maven {
-            url = "${project.rootDir}/../releases"
+            name = "neasaa"
+            url = uri(PACKAGE_REPO_URL)
+            credentials {
+                username = PACKAGE_REPO_USER_NAME
+                password = System.getenv("TOKEN")
+            }
         }
     }
 }

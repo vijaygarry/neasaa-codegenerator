@@ -1,5 +1,10 @@
+apply from: "${rootDir}/gradle/publish-local-maven-artifacts.gradle"
+
+
+compileJava.dependsOn(checkVersion)
+
 jar {
-    baseName = 'code-generator'
+    baseName = BASE_JAR_NAME
 }
 
 dependencies {
@@ -9,4 +14,10 @@ dependencies {
     compile libraries.neasaaUtils
 }
 
-eclipse.project.name = 'code-generator'
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+eclipse.project.name = BASE_JAR_NAME
