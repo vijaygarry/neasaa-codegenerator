@@ -1,11 +1,12 @@
 jar {
-    baseName = 'neasaa-utils'
+    baseName = 'code-generator'
 }
 
 dependencies {
 	compile libraries.logger
-    compile libraries.postgresJdbc
+    compile libraries.jdbcDrivers
     compile libraries.commons
+    compile libraries.neasaaUtils
 }
 
-eclipse.project.name = 'neasaa-utils'
+eclipse.project.name = 'code-generator'

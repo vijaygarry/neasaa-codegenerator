@@ -14,6 +14,7 @@ Project has following mode:
 	* Generates (Spring) DAO classes (Interface and implementation)for specific table
 
 
+## Usage
 ```
 class com.neasaa.codegenerator.CodeGenerator <mode> <applicationConfig>
  mode: 
