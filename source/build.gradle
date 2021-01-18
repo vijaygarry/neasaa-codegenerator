@@ -8,6 +8,7 @@ allprojects {
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
 	apply plugin: 'distribution'
+	apply plugin: 'maven'
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -15,11 +16,20 @@ allprojects {
 	
 	repositories {
     	mavenCentral()
+    	maven {
+            url = uri(PACKAGE_REPO_URL)
+            credentials {
+                username = PACKAGE_REPO_USER_NAME
+                password = System.getenv("TOKEN")
+            }
+        }
 	}
 
-	task checkVersion << {
-		if(!hasVersion("version")) {
-			throw new GradleException ("Property 'version' is missing. Specify using '-Pversion=' command line option")
+	task checkVersion {
+		doLast {
+			if(!hasVersion("version")) {
+				throw new GradleException ("Property 'version' is missing. Specify using '-Pversion=' command line option")
+			}
 		}
 	}
 

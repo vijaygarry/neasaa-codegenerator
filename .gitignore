@@ -1,8 +1,10 @@
 source/.gradle
-source/components/utils/.settings
-source/components/utils/.classpath
-source/components/utils/.project
-source/components/utils/bin
+source/components/code-generator/.settings
+source/components/code-generator/.classpath
+source/components/code-generator/.project
+source/components/code-generator/bin
+source/components/code-generator/build
 source/build
 source/components/build
-source/components/utils/build
+source/.settings
+source/components/.settings
