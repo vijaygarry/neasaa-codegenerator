@@ -1,3 +1,5 @@
+# Code generator code moved under neasaa-util repository.
+
 # code-generator
 This is the utility project for generating java code for specific use case.
 
